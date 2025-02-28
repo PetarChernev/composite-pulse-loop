@@ -109,12 +109,12 @@ def Population_3_from_2state(Omega0, Omega3, zp, Phi, zmin=0.0, zmax=5.0):
 # Define parameter ranges for Omega0 and Omega3
 Omega0_max = 5.0
 Omega0_min = 0.0
-n_Omega0 = 50
+n_Omega0 = 500
 Omega0_values = np.linspace(Omega0_max, Omega0_min, n_Omega0)
 
 Omega3_min = 0.0
 Omega3_max = 5.0
-n_Omega3 = 50
+n_Omega3 = 500
 Omega3_values = np.linspace(Omega3_min, Omega3_max, n_Omega3)
 
 # Prepare grid for population P3

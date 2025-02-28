@@ -58,6 +58,12 @@ def Population(omega0, omega3, zp_cumsum, phi, zmin, zmax):
     E3_final = sol.y[2, -1]
     return np.abs(E3_final)**2
 
+# Worker function defined at the top level for pickling.
+def worker(args):
+    omega0, omega3 = args
+    # Use the global variables zp_cumsum, phi, zmin, and zmax defined in __main__
+    return Population(omega0, omega3, zp_cumsum, phi, zmin, zmax)
+
 if __name__ == '__main__':
     # -------------------------------
     # Parameters (using the second set from your code)
@@ -87,15 +93,14 @@ if __name__ == '__main__':
     zstep = 0.1     # (not directly used in integration)
     
     # Define the ranges for omega3 and omega0.
-    # In the Mathematica code, omega3 goes from 0 to 5 with step 5/50, and
-    # omega0 goes from 0 to 5 with step 5/50.
+    # Here we use 500 steps in each direction.
     omega3_min = 0.0
     omega3_max = 5.0
-    omega3_step = 5.0 / 50.0
+    omega3_step = 5.0 / 500.0
 
     omega0_min = 0.0
     omega0_max = 5.0
-    omega0_step = 5.0 / 50.0
+    omega0_step = 5.0 / 500.0
 
     omega0_values = np.arange(omega0_min, omega0_max + 1e-6, omega0_step)
     omega3_values = np.arange(omega3_min, omega3_max + 1e-6, omega3_step)
@@ -112,9 +117,7 @@ if __name__ == '__main__':
     # Use multiprocessing Pool with tqdm to compute the population for each task.
     # -------------------------------
     with Pool() as pool:
-        func = partial(Population, zp_cumsum=zp_cumsum, phi=phi, zmin=zmin, zmax=zmax)
-        results = list(tqdm(pool.starmap(func, tasks),
-                            total=len(tasks)))
+        results = list(tqdm(pool.imap_unordered(worker, tasks), total=len(tasks)))
     
     # Reshape results into a 2D grid
     P3 = np.array(results).reshape(len(omega0_values), len(omega3_values))
@@ -128,7 +131,7 @@ if __name__ == '__main__':
     plt.ylabel(r'$\Omega_0$')
     plt.title(r'$P_3 = |E_3(z_{max})|^2$')
     plt.colorbar(label=r'$P_3$')
-    plt.savefig('population_transfer_3state.png')
+    plt.savefig('population_transfer_3state_500x500.png')
     plt.show()
 
     # Optionally, export the data to a file:
