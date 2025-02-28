@@ -119,7 +119,9 @@ plt.xlabel(r'$\Omega_3$')
 plt.ylabel(r'$\Omega_0$')
 plt.title(r'$P_3 = |E_3(z_{max})|^2$')
 plt.colorbar(label=r'$P_3$')
+plt.savefig('population_transfer_3state.png')
 plt.show()
+
 
 # # Export the data to a file (using a Windows-style path as in your code).
 # np.savetxt("c:\\data\\P3.dat", P3)
